@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Axis Bank Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" id="theme-style">
+    <style>
+        /* Define your dark theme styles here */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeStyleLink = document.getElementById('theme-style');
+
+            // Add an event listener for the 'transitionend' event
+            themeStyleLink.addEventListener('transitionend', () => {
+                // Update the theme link after the transition is complete
+                themeStyleLink.removeEventListener('transitionend', arguments.callee);
+                themeStyleLink.href = body.classList.contains('dark-mode')
+                    ? "{{ url_for('static', filename='styles.css') }}"
+                    : "{{ url_for('static', filename='dark-theme.css') }}";
+            });
+
+            // Toggle the dark mode class
+            body.classList.toggle('dark-mode');
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <center>
+        <img src="https://www.bing.com/images/search?view=detailV2&ccid=rBk19h%2fq&id=56E43E02F0BDD670F3B77FB7948E8B78D901A325&thid=OIP.rBk19h_qlexuFjPZVxMnOgHaEK&mediaurl=https%3a%2f%2flogos-world.net%2fwp-content%2fuploads%2f2021%2f03%2fLamborghini-Logo.png&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.ac1935f61fea95ec6e1633d95713273a%3frik%3dJaMB2XiLjpS3fw%26pid%3dImgRaw%26r%3d0&exph=2160&expw=3840&q=logo&simid=607988978567677890&FORM=IRPRST&ck=102C1883098D35F00CDF13E2157D8517&selectedIndex=19&itb=1"
+            width="50" height="50">
+        <img src="https://www.bing.com/images/search?view=detailV2&ccid=NvllMsf2&id=068DB6D724D0E5DAC83A3F1D0127B164E649E00E&thid=OIP.NvllMsf23fsloK1cVBFf_QHaE8&mediaurl=https%3a%2f%2fassets.ey.com%2fcontent%2fdam%2fey-sites%2fey-com%2ftr_tr%2fgorseller%2fey-logo-black.png&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.36f96532c7f6ddfb25a0ad5c54115ffd%3frik%3dDuBJ5mSxJwEdPw%26pid%3dImgRaw%26r%3d0&exph=2560&expw=3840&q=logo&simid=608029037707597635&FORM=IRPRST&ck=0B738686A997A065CD51FBD23496BFFD&selectedIndex=31&itb=0" width="50" height="50">
+        <h1>Resume anaylses</h1>
+    </center>
+    <label id="dark-mode-toggle-label" for="dark-mode-toggle">
+        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+        <div id="dark-mode-toggle-slider"></div>
+    </label>
+
+    <form action="/" method="post" enctype="multipart/form-data">
+        <label for="job_description">Job Description:</label>
+        <textarea name="job_description" rows="4" cols="50" required></textarea>
+        <br>
+        <label for="resume_files">Upload Resumes (PDF):</label>
+        <input type="file" name="resume_files" accept=".pdf" multiple required>
+        <br>
+        <input type="submit" value="Analyze Resumes">
+    </form>
+    <br>
+    {% if results %}
+    <h2>Ranked Resumes:</h2>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Similarity in %</th>
+            <th>location</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ result[0][0] }}</td>
+            <td>{{ result[1][0] }}</td>
+            <td>{{ result[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if results %}
+    <br>
+    <a href="{{ url_for('download_csv') }}" download="ranked_resumes.csv" class="download-link">
+        Download CSV
+    </a>
+
+    {% endif %}
+
+    {% endif %}
+</body>
+
+</html>
